@@ -2,6 +2,7 @@ package com.pankaj.Banking.Service.impl;
 
 import com.pankaj.Banking.model.Users;
 import com.pankaj.Banking.repo.UserRepo;
+import com.pankaj.Banking.utils.JWTutils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +20,9 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JWTutils jwTutils;
+
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public Users register(Users user) {
@@ -32,7 +36,7 @@ public class UserService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword())
             );
-            return "success";
+            return jwTutils.generatetoken(users.getUsername());
         } catch (AuthenticationException e) {
             return "fail";
         }
